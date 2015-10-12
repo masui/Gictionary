@@ -62,7 +62,7 @@ initDict = (dict)->
 	    cur[ind] = i
   dict
 
-patInit = (pat,level) ->
+patInit = (pat,level) -> # 曖昧マッチのための正規表現生成
   cslength[level] = 0
   if pat.length > 0
     pat.match(/^(\[[^\]]+\])(.*)$/) || pat.match(/^(.)(.*)$/)
@@ -76,16 +76,15 @@ patInit = (pat,level) ->
   [len+1, top+s]
 
 generateCand = (connection, pat, dict, level, candidates, limit=20) ->
+  patInit pat, 0 if level == 0
   d = if connection then connectionLink[connection] else hashLink[patind(pat)]
   while d != undefined
     if dict[d].pat.match(regexp[level]) # マッチ
       matchlen = RegExp.$1.length;
       if matchlen == cslength[level] && (!exactmode || exactmode && dict[d].pat.length == matchlen) # 最後までマッチ
-        # ncands = addCandidate(dict[d].word, dict[d].pat, dict[d].outConnection, ncands, level, matchlen);
         wordstack.push dict[d].word
         word = wordstack.join('')
-        candidates.push word unless candidates.indexOf(word) >= 0
-        # console.log "found #{wordstack.join('')}"
+        candidates.push word unless candidates.indexOf(word) >= 0 # 候補追加
         return if candidates.length >= limit
         wordstack.pop()
       else if matchlen == dict[d].pat.length && dict[d].out != undefined
@@ -98,7 +97,6 @@ generateCand = (connection, pat, dict, level, candidates, limit=20) ->
 dict = init()
 
 exports.search = (pat,mode=false) ->
-  [len, top] = patInit(pat,0)
   exactmode = mode
   wordstack = []
   patstack = []
