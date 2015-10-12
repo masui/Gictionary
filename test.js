@@ -1,6 +1,6 @@
-#
-# テスト
-#
+//
+// テスト
+//
 
 assert = require('assert');
 
