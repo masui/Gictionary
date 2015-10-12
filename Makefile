@@ -13,8 +13,13 @@ dict1.txt:
 		> tmp/tmp2.txt
 	ruby -Iprograms programs/connection2txt -r rklist.gyaim -n tmp/tmp2.txt > dict1.txt
 dict2.txt: dict1.txt
-	ruby -I~/SlimeDict/programs ~/SlimeDict/programs/connection2txt dict1.txt  > dict2.txt
+	ruby -Iprograms programs/connection2txt dict1.txt  > dict2.txt
 dict.js: dict2.txt
-	ruby programs/dict2js.rb dict2.txt > dict.js
+	ruby programs/dict2js.rb dict2.txt > dictdata.js
 
+connectiondict.js: connectiondict.coffee
+	coffee -b -c connectiondict.coffee
+
+test: connectiondict.js
+	node test.js
 

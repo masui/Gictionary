@@ -3,7 +3,7 @@
 # 接続辞書による変換
 #
 
-dictjs = require './dict.js'
+dictdata = require './dictdata.js'
 
 hashLink = []         # 先頭文字が一致する辞書エントリのリスト
 connectionLink = []   # 接続番号が一致する辞書エントリのリスト
@@ -31,7 +31,7 @@ patind = (s) ->
     else 10
       
 readDict = ->
-  dictjs.dict.map (d) ->
+  dictdata.dict.map (d) ->
     {pat:d[0], word:d[1], in:d[2], out:d[3]}
 
 initDict = (dict)->
@@ -75,14 +75,7 @@ patInit = (pat,level) ->
   regexp[level] = RegExp "^(#{top}#{s})"
   [len+1, top+s]
 
-search = (pat,dict,mode=false) ->
-  [len, top] = patInit(pat,0)
-  exactmode = mode
-  wordstack = []
-  patstack = []
-  generateCand connection=null, pat, dict, level=0
-
-generateCand = (connection, pat, dict, level) ->
+generateCand = (connection, pat, dict, level, candidates, limit=20) ->
   d = if connection then connectionLink[connection] else hashLink[patind(pat)]
   while d != undefined
     if dict[d].pat.match(regexp[level]) # マッチ
@@ -90,13 +83,24 @@ generateCand = (connection, pat, dict, level) ->
       if matchlen == cslength[level] && (!exactmode || exactmode && dict[d].pat.length == matchlen) # 最後までマッチ
         # ncands = addCandidate(dict[d].word, dict[d].pat, dict[d].outConnection, ncands, level, matchlen);
         wordstack.push dict[d].word
-        console.log "found #{wordstack.join('<>')}"
+        word = wordstack.join('')
+        candidates.push word unless candidates.indexOf(word) >= 0
+        # console.log "found #{wordstack.join('')}"
+        return if candidates.length >= limit
         wordstack.pop()
       else if matchlen == dict[d].pat.length && dict[d].out != undefined
         wordstack.push dict[d].word
-        generateCand dict[d].out, pat, dict, level+matchlen
+        generateCand dict[d].out, pat, dict, level+matchlen, candidates, limit
         wordstack.pop()
     d = if connection then dict[d].connectionLink else dict[d].hashLink
+  candidates
   
 dict = init()
-search 'masuiseN', dict
+
+exports.search = (pat,mode=false) ->
+  [len, top] = patInit(pat,0)
+  exactmode = mode
+  wordstack = []
+  patstack = []
+  candidates = []
+  generateCand connection=null, pat, dict, level=0, candidates, limit=20
