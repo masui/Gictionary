@@ -18,7 +18,7 @@ dict.js: dict2.txt
 	ruby programs/dict2js.rb dict2.txt > dictdata.js
 
 connectiondict.js: connectiondict.coffee
-	coffee -b -c connectiondict.coffee
+	coffee -c connectiondict.coffee
 
 test: connectiondict.js
 	node test.js
