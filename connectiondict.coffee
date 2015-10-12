@@ -73,49 +73,27 @@ patInit = (pat,level,regexp,cslength) ->
   regexp[level] = RegExp "^(#{top}#{s})"
   [len+1, top+s, regexp, cslength]
 
-# search("masui")
-# search("m[aiueo]s[aiueo][aiueo]")
-
 search = (pat,dict,exactmode=false) ->
-  console.log dict[14]
-  console.log dict[477]
   [len, top, regexp, cslength] = patInit(pat,0,[],[])
-  generateCand connection=null, pat, dict, level=0, [], patstack=[], exactmode, candidates=[], regexp, cslength
+  generateCand connection=null, pat, dict, level=0, wordstack=[], patstack=[], exactmode, candidates=[], regexp, cslength
 
 generateCand = (connection, pat, dict, level, wordstack, patstack, exactmode, candidates, regexp, cslength) ->
-  console.log "generateCand: pat=#{pat} regexp = #{regexp[level]} connection=#{connection}, level=#{level}, pat=#{pat}"
+  # console.log "generateCand: pat=#{pat} regexp = #{regexp[level]} connection=#{connection}, level=#{level}, pat=#{pat}"
   # これまでマッチした文字列がwordstack[], patstack[]に入っている
   d = if connection then connectionLink[connection] else hashLink[patind(pat)]
-  #console.log "patind = #{patind(pat)} d = #{d}"
   while d != undefined
-    # console.log "*** d = #{d} pat=#{pat}"
-    if level > 0
-      console.log "dict[d] = #{dict[d].pat}"
-      console.log "level=#{level} regexp[level] = #{regexp[level]}"
     if dict[d].pat.match(regexp[level]) # マッチ
-      #console.log "level=#{level}"
-      #console.log "regexp = #{regexp[level]}"
-      #console.log "match!"
       matchlen = RegExp.$1.length;
-      #console.log "matchlen=#{matchlen}"
       if matchlen == cslength[level] && (!exactmode || exactmode && dict[d].pat.length == matchlen) # 最後までマッチ
         # ncands = addCandidate(dict[d].word, dict[d].pat, dict[d].outConnection, ncands, level, matchlen);
-        wordstack[level] = dict[d].word
-        patstack[level] = dict[d].pat
-        console.log "found #{wordstack.join('-')}"
+        wordstack.push dict[d].word
+        console.log "found #{wordstack.join('<>')}"
+        wordstack.pop()
       else if matchlen == dict[d].pat.length && dict[d].out != undefined
-        #console.log "else part d=#{d} matchlen = #{matchlen} dict[d].pat = #{dict[d].pat}"
-        # if pat.index(@dict[d].pat) == 0 # connectionがあるかも
-        # restpat = pat[@dict[d].pat.length,pat.length]
-        wordstack[level] = dict[d].word
-        patstack[level] = dict[d].pat
-        console.log "level=#{level} matchlen=#{matchlen} regexp = #{regexp[level+matchlen]}"
+        wordstack.push dict[d].word
         generateCand dict[d].out, pat, dict, level+matchlen, wordstack, patstack, exactmode, candidates, regexp, cslength
-    else
-      #console.log "not match"
-    #console.log "-------#{d}"
+        wordstack.pop()
     d = if connection then dict[d].connectionLink else dict[d].hashLink
-    #console.log "-------next #{d}"
   
 dict = init()
-search 's[aiueo]NziYuu', dict
+search 'masuiseN', dict
