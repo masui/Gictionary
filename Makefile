@@ -29,6 +29,6 @@ dict.js: dict.coffee
 #
 # テストプログラム
 #
-test: connectiondict.js
+test: dict.js
 	node test.js
 

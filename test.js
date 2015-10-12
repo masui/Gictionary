@@ -3,7 +3,7 @@
 //
 
 assert = require('assert');
-dict =   require('./connectiondict.js');
+dict =   require('./dict.js'); // 変換プログラム
 
 assert(dict.search('masuisaN').indexOf("増井さん") >= 0);
 assert(dict.search('eeee').indexOf("ああああ") < 0);
