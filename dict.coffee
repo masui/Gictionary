@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# 接続辞書による変換 (JS版)
+# 接続辞書による変換 (Coffee版)
 #
 
 dictdata = require './dictdata.js'
@@ -83,7 +83,7 @@ generateCand = (connection, pat, dict, level, candidates, limit=20) ->
       matchlen = RegExp.$1.length;
       if matchlen == cslength[level] && (!exactmode || exactmode && dict[d].pat.length == matchlen) # 最後までマッチ
         wordstack.push dict[d].word
-        word = wordstack.join('')
+        word = wordstack.join('').replace(/\*/g,'')
         candidates.push word unless candidates.indexOf(word) >= 0 # 候補追加
         return candidates if candidates.length >= limit
         wordstack.pop()

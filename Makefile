@@ -21,14 +21,13 @@ dictdata.js: dict2.txt
 	ruby programs/dict2js.rb dict2.txt > dictdata.js
 
 #
-# 変換プログラム
+# JS生成
 #
-dict.js: dict.coffee
+compile:
 	coffee -c dict.coffee
 
 #
-# テストプログラム
+# テスト
 #
-test: dict.js
-	node test.js
-
+test:
+	coffee test.coffee
