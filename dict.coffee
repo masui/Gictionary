@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# 接続辞書による変換
+# 接続辞書による変換 (JS版)
 #
 
 dictdata = require './dictdata.js'
@@ -85,7 +85,7 @@ generateCand = (connection, pat, dict, level, candidates, limit=20) ->
         wordstack.push dict[d].word
         word = wordstack.join('')
         candidates.push word unless candidates.indexOf(word) >= 0 # 候補追加
-        return if candidates.length >= limit
+        return candidates if candidates.length >= limit
         wordstack.pop()
       else if matchlen == dict[d].pat.length && dict[d].out != undefined
         wordstack.push dict[d].word
