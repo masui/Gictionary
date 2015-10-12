@@ -1,0 +1,28 @@
+#!/usr/bin/ruby
+# -*- coding: utf-8 -*-
+#
+# % gem install gyazz
+#
+require 'gyazz'
+
+def output(word,yomi,cat,nextcat)
+  yomis = yomi.split(/\s+/)
+  yomis.each { |yomi|
+    puts "#{yomi} #{word} #{cat} #{nextcat}"
+  }
+end
+
+wiki = Gyazz::Wiki.new('Gictionary2')
+
+counter = 1
+pages = wiki.pages(:timeout => 1000000).each { |page|
+  next if page.text.to_s == ''
+  STDERR.puts "#{counter} #{page.title}"
+  counter += 1
+  page.text.split(/\n/).each { |line|
+    break if line =~ /\[\[.*\]\]/
+    a = line.split(/\s+/)
+    break if a.length < 2 || a.length > 3
+    output(page.name,a[0],a[1],a[2])
+  }
+}

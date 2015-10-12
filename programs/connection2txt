@@ -1,0 +1,70 @@
+# -*- coding: utf-8 -*-
+# -*- ruby -*-
+#
+
+require 'romakana'
+
+rklist = "rklist.slime"
+
+no_tsu = true
+while ARGV[0] =~ /^\-/ do
+  if ARGV[0] == '-r' then
+    ARGV.shift
+    rklist = ARGV.shift
+  elsif ARGV[0] == '-n' then
+    ARGV.shift
+    no_tsu = false
+  end
+end
+
+files = ARGV
+
+wordclassno = {}   # 単語クラス番号
+wordclassindex = 1
+
+rk = Romakana.new(File.readlines(File.dirname($0) + '/' + rklist),no_tsu)
+
+lines = {}
+files.each { |file|
+  File.open(file){ |f|
+    STDERR.puts "#{file}...."
+    f.each { |line|
+      line.chomp!
+      next if line =~ /^\s*$/  # 空白行除去
+      next if line =~ /^#/     # コメント除去
+      line.sub!(/\s+#.*$/,'')  # コメント除去
+      (yomi, word, wordclass, nextclass) = line.split(/\s+/)
+      next if !wordclass
+      nextclass = '' if !nextclass
+      l = "#{yomi} #{word} #{wordclass} #{nextclass}"
+      next if lines[l]      # 同じエントリ除去
+      lines[l] = true
+
+      # STDERR.puts "#{yomi} #{word} <#{wordclass}> <#{nextclass}>"
+
+      #
+      # 単語や単語クラス番号づけ
+      # xxxという単語の番号はwordclassno[xxx]に格納
+      #
+      if wordclassno[wordclass].nil? then
+        wordclassno[wordclass] = wordclassindex
+        STDERR.puts "#{wordclassindex} => #{wordclass}"
+        wordclassindex += 1
+      end
+      if nextclass != '' && wordclassno[nextclass].nil? then
+        wordclassno[nextclass] = wordclassindex
+        STDERR.puts "#{wordclassindex} => #{nextclass}"
+        wordclassindex += 1
+      end
+
+      romas = [yomi]
+      # if yomi =~ /^\xe3[\x81\x82]/ then
+      if yomi =~ /^\p{Hiragana}/ then
+        romas = rk.hiragana2roma(yomi)
+      end
+      romas.each { |roma|
+        puts "#{roma}\t#{word}\t#{wordclassno[wordclass]}\t#{wordclassno[nextclass]}"
+      }
+    }
+  }
+}

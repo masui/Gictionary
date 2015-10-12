@@ -2,18 +2,20 @@
 #
 # 接続辞書による変換
 #
-#
 
 dictjs = require './dict.js'
 
 hashLink = []         # 先頭文字が一致する辞書エントリのリスト
 connectionLink = []   # 接続番号が一致する辞書エントリのリスト
-# regexp = []           # パタンの部分文字列にマッチするRegExp
-# cslength = []         # regexp[n]に完全マッチするパタンの長さ
+regexp = []           # パタンの部分文字列にマッチするRegExp
+cslength = []         # regexp[n]に完全マッチするパタンの長さ
+wordstack = []
+patstack = []
+exactmode = false
+candidates = []
 
 init = ->
-  dict = readDict()
-  initDict dict
+  initDict readDict()
   
 patind = (s) ->
   switch s[0]
@@ -35,7 +37,7 @@ readDict = ->
 initDict = (dict)->
   #
   # 先頭読みが同じ単語のリストをつなげておく
-  #
+  # 
   cur = []
   for entry, i in dict
     if !entry.word.match /^\*/
@@ -47,7 +49,7 @@ initDict = (dict)->
         dict[cur[ind]].hashLink = i
         cur[ind] = i
   #
-  # コネクションつながりのリスト
+  # 同じ接続のものをリンクしておく
   # 
   cur = []
   for entry, i in dict
@@ -60,26 +62,27 @@ initDict = (dict)->
 	    cur[ind] = i
   dict
 
-patInit = (pat,level,regexp,cslength) ->
+patInit = (pat,level) ->
   cslength[level] = 0
   if pat.length > 0
     pat.match(/^(\[[^\]]+\])(.*)$/) || pat.match(/^(.)(.*)$/)
     top = RegExp.$1
-    [len, p, regexp, cslength] = patInit(RegExp.$2, level+1, regexp, cslength)
+    [len, p] = patInit(RegExp.$2, level+1)
     cslength[level] = len
   else
     [len, p, top] = [0, '', '']
   s = if p.length > 0 then "(#{p})?" else ''
   regexp[level] = RegExp "^(#{top}#{s})"
-  [len+1, top+s, regexp, cslength]
+  [len+1, top+s]
 
-search = (pat,dict,exactmode=false) ->
-  [len, top, regexp, cslength] = patInit(pat,0,[],[])
-  generateCand connection=null, pat, dict, level=0, wordstack=[], patstack=[], exactmode, candidates=[], regexp, cslength
+search = (pat,dict,mode=false) ->
+  [len, top] = patInit(pat,0)
+  exactmode = mode
+  wordstack = []
+  patstack = []
+  generateCand connection=null, pat, dict, level=0
 
-generateCand = (connection, pat, dict, level, wordstack, patstack, exactmode, candidates, regexp, cslength) ->
-  # console.log "generateCand: pat=#{pat} regexp = #{regexp[level]} connection=#{connection}, level=#{level}, pat=#{pat}"
-  # これまでマッチした文字列がwordstack[], patstack[]に入っている
+generateCand = (connection, pat, dict, level) ->
   d = if connection then connectionLink[connection] else hashLink[patind(pat)]
   while d != undefined
     if dict[d].pat.match(regexp[level]) # マッチ
@@ -91,7 +94,7 @@ generateCand = (connection, pat, dict, level, wordstack, patstack, exactmode, ca
         wordstack.pop()
       else if matchlen == dict[d].pat.length && dict[d].out != undefined
         wordstack.push dict[d].word
-        generateCand dict[d].out, pat, dict, level+matchlen, wordstack, patstack, exactmode, candidates, regexp, cslength
+        generateCand dict[d].out, pat, dict, level+matchlen
         wordstack.pop()
     d = if connection then dict[d].connectionLink else dict[d].hashLink
   
