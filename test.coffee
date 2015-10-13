@@ -24,6 +24,8 @@ success '[kg][aiueo][kg][aiueo]s[aiueo][aiueo]', "国際"
 success 'taberaremaseN', "食べられません"
 success 't[aiueo]b[aiueo]r[aiueo]remaseN', "食べられません"
 success 'taberare', "食べられ"
+success 't[aiueo]b[aiueo]maseN', "食べません"
+success 't[aiueo]b[aiueo]maseN', "飛びません"
 
 fail     'eeee', "ああああ"
 success 'taiyou', "太陽"
