@@ -12,7 +12,7 @@ def output(word,yomi,cat,nextcat)
   }
 end
 
-wiki = Gyazz::Wiki.new('Gictionary2')
+wiki = Gyazz::Wiki.new('Gictionary')
 
 counter = 1
 pages = wiki.pages(:timeout => 1000000).each { |page|
