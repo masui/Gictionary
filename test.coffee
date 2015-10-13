@@ -4,17 +4,32 @@
 assert = require 'assert'
 dict =   require './dict.coffee'
 
-assert dict.search('masui').indexOf("増井") >= 0
-assert dict.search('masuisaN').indexOf("増井さん") >= 0
-assert dict.search('m[aiueo]suisa').indexOf("増井さん") >= 0
+success = (a, b) ->
+  assert dict.search(a).indexOf(b) >= 0
+fail = (a, b) ->
+  assert dict.search(a).indexOf(b) < 0
 
-assert dict.search('taberaremaseN').indexOf("食べられません") >= 0
-assert dict.search('t[aiueo]b[aiueo]r[aiueo]remaseN').indexOf("食べられません") >= 0
-assert dict.search('taberare').indexOf("食べられ") >= 0
+# console.log dict.search('masui')
+  
+success 'meguro',        "目黒"
+success 'meguroeki',     "目黒駅"
 
-assert dict.search('eeee').indexOf("ああああ") < 0
-assert dict.search('taiyou').indexOf("太陽") >= 0
-assert dict.search('heNkousuru').indexOf("変更する") >= 0
+success 'masui',         "増井"
+fail    'masux',         "増井"
+success 'masuisaN',      "増井さん"
+success 'm[aiueo]suisa', "増井さん"
+
+success '[kg][aiueo][kg][aiueo]s[aiueo][aiueo]', "国際"
+
+success 'taberaremaseN', "食べられません"
+success 't[aiueo]b[aiueo]r[aiueo]remaseN', "食べられません"
+success 'taberare', "食べられ"
+
+fail     'eeee', "ああああ"
+success 'taiyou', "太陽"
+success 'heNkousuru', "変更する"
+success 'heNkous[aiueo]r[aiueo]', "変更する"
+
 assert dict.search('sa').length > 10
 assert dict.search('sa').length <= 20
 

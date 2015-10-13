@@ -18,6 +18,7 @@ init = ->
   initDict readDict()
   
 patind = (s) ->
+  s = s.replace('[','')
   switch s[0]
     when 'a', 'i', 'u', 'e', 'o', 'A', 'I', 'U', 'E', 'O' then 0
     when 'k', 'g' then 1
