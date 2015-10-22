@@ -3,15 +3,19 @@
 # 
 assert = require 'assert'
 
-dict =     require './dict.coffee'
-kanaroma = require './kanaroma.coffee'
+dictdata =   require './dictdata.js'
+dictsearch = require './dictsearch.coffee'
+kanaroma =   require './kanaroma.coffee'
+
+dictsearch.init dictdata.dict
 
 success = (a, b) ->
-  assert dict.search(a).indexOf(b) >= 0
+  assert dictsearch.search(a).indexOf(b) >= 0
 fail = (a, b) ->
-  assert dict.search(a).indexOf(b) < 0
+  assert dictsearch.search(a).indexOf(b) < 0
 
 assert kanaroma.kana2roma('ますい') == "masui"
+assert kanaroma.kana2roma('コロンブス') == "koroNbusu"
 
 success kanaroma.kana2roma('めぐろ'), "目黒"
 success kanaroma.kana2roma('ますい'), "増井"
@@ -36,8 +40,8 @@ success 'taiyou', "太陽"
 success 'heNkousuru', "変更する"
 success 'heNkous[aiueo]r[aiueo]', "変更する"
 
-assert dict.search('sa').length > 10
-assert dict.search('sa').length <= 20
+assert dictsearch.search('sa').length > 10
+assert dictsearch.search('sa').length <= 20
 
 
 

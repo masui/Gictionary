@@ -3,7 +3,7 @@
 # 接続辞書による変換 (Coffee版)
 #
 
-dictdata = require './dictdata.js'
+dict = null
 
 hashLink = []         # 先頭文字が一致する辞書エントリのリスト
 connectionLink = []   # 接続番号が一致する辞書エントリのリスト
@@ -14,8 +14,8 @@ patstack = []
 exactmode = false
 candidates = []
 
-init = ->
-  initDict readDict()
+init = (dictdata)->
+  initDict readDict(dictdata)
   
 patind = (s) ->
   s = s.replace('[','')
@@ -31,8 +31,9 @@ patind = (s) ->
     when 'r' then 8
     else 10
       
-readDict = ->
-  dictdata.dict.map (d) ->
+readDict = (dictdata) ->
+  # dictdata.dict.map (d) ->
+  dictdata.map (d) ->
     {pat:d[0], word:d[1], in:d[2], out:d[3]}
 
 initDict = (dict)->
@@ -95,7 +96,8 @@ generateCand = (connection, pat, dict, level, candidates, limit=20) ->
     d = if connection then dict[d].connectionLink else dict[d].hashLink
   candidates
   
-dict = init()
+exports.init = (dictdata) ->
+  dict = init dictdata
 
 exports.search = (pat,mode=false) ->
   exactmode = mode
