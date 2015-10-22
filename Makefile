@@ -23,11 +23,16 @@ dictdata.js: dict2.txt
 #
 # JS生成
 #
-compile:
-	coffee -c dict.coffee
+js:
+	coffee -c dictsearch.coffee
+	coffee -c kanaroma.coffee
 
 #
 # テスト
 #
 test:
 	coffee test.coffee
+test2: js
+	open test.html
+
+	
