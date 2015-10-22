@@ -2,15 +2,20 @@
 # テスト
 # 
 assert = require 'assert'
-dict =   require './dict.coffee'
+
+dict =     require './dict.coffee'
+kanaroma = require './kanaroma.coffee'
 
 success = (a, b) ->
   assert dict.search(a).indexOf(b) >= 0
 fail = (a, b) ->
   assert dict.search(a).indexOf(b) < 0
 
-# console.log dict.search('masui')
-  
+assert kanaroma.kana2roma('ますい') == "masui"
+
+success kanaroma.kana2roma('めぐろ'), "目黒"
+success kanaroma.kana2roma('ますい'), "増井"
+
 success 'meguro',        "目黒"
 success 'meguroeki',     "目黒駅"
 
