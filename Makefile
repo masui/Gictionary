@@ -34,3 +34,8 @@ test:
 	coffee test.coffee
 test2: compile
 	open test.html
+
+#
+github:
+	open http://GitHub.com/masui/Gictionary
+

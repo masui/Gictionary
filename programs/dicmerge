@@ -1,0 +1,125 @@
+# -*- coding: utf-8 -*-
+# -*- ruby -*- 
+#
+#  Gyazz辞書やテキスト辞書からSlime用の辞書を作成
+#
+#  % dicmerge {wiki名::ページ名} {辞書テキスト [*]重み}
+#
+#  例
+#  % dicmerge 'kdict::リスト' noun.dic 1000 'kdict::テスト'
+#
+
+require 'rubygems'
+require 'net/http'
+require 'gyazz'
+
+class MergeDic
+  def initialize
+    @weight = {}
+    @processed = {}
+  end
+
+  #
+  # /$wikiname/name にリストされた単語のウェイトを計算する。
+  # Zipfを仮定する場合はウェイトを1/1, 1/2, 1/3, ... と減らす。
+  # そうでない場合はすべてに同じウェイトを割り当てる。
+  #
+  def process_gyazzpage(name,value,zipf)
+    return if @processed[name]
+    @processed[name] = true
+    STDERR.puts "Reading dictionary #{name}..."
+    wiki = @wiki
+    if name =~ /^(.*)::(.*)$/ then
+      wiki = $1
+      name = $2
+    end
+    n = 1.0
+    gyazz = Gyazz.new(wiki)
+    gyazz.get(name).split(/\n/).each { |line|
+      STDERR.puts "!!!!" if line =~ /empty/
+      line.chomp!
+      line.sub!(/\s+$/,'')
+      next if line =~ /^#/
+      next if line =~ /^\s*$/
+      line.sub!(/\s+#.*$/,'')  # コメント除去
+      if line =~ /\[\[(.*)\]\]\s+(\*)?(\d+)/ then
+        process_gyazzpage($1,$3.to_f,$2.to_s == '' ? true : false)
+      else
+        div = (zipf ? n : 1.0)
+        weight = @weight[line].to_f
+        newweight = value/div
+        newweight = weight if weight > newweight
+        @weight[line] = newweight
+        n += 1.0
+      end
+    }
+  end
+
+  def process_gyazzdict(wiki,page)
+    STDERR.puts "Processing #{wiki}::#{page}"
+    @wiki = wiki
+    gyazz = Gyazz.new(wiki)
+    gyazz.get(page).split(/\n/).each { |line|
+      line.chomp!
+      next if line =~ /^#/
+      line.sub!(/\s+#.*$/,'')  # コメント除去
+      if line =~ /\[\[(.*)\]\]\s+(\*)?(\d+)/ then # e.g. "[[普通名詞]] *100"
+        process_gyazzpage($1,$3.to_f,$2.to_s == '' ? true : false)
+      elsif line =~ /\[\[\[(.*)\]\]\]/ then
+        # do nothing
+      elsif line =~ /\[\[(.*)\]\]/ then # e.g. "[[普通名詞]]"
+        process_gyazzdict(wiki,$1)
+      end
+    }
+  end
+
+  def process_dicfile(dict,value,zipf)
+    STDERR.puts "Reading dictionary #{dict}..."
+    n = 1.0
+    File.open(dict){ |f|
+      f.each { |line|
+        line.chomp!
+        line.sub!(/\s+$/,'')
+        line.sub!(/\s+#.*$/,'')
+        next if line =~ /^#/
+        next if line =~ /^\s*$/
+        div = (zipf ? n : 1.0)
+        weight = @weight[line].to_f
+        newweight = value/div
+        newweight = weight if weight > newweight
+        @weight[line] = newweight
+        n += 1.0
+      }
+    }
+  end
+
+  def dump
+    @weight.keys.sort { |a,b|
+      @weight[b] <=> @weight[a]
+    }.each { |entry|
+      # puts "#{@weight[entry]} #{entry}"
+      puts entry
+    }
+  end
+
+  def run
+    while arg = ARGV.shift do
+      if arg =~ /^(.*)::(.*)$/ then
+        wiki = $1
+        page = $2
+        process_gyazzdict(wiki,page)
+      else
+        dict = arg
+        arg = ARGV.shift
+        arg =~ /(\*)?([\d]+)/
+        zipf = $1.nil?
+        value = $2.to_f
+        process_dicfile(dict,value,zipf)
+      end
+    end
+    dump
+  end
+end
+
+g = MergeDic.new
+g.run
