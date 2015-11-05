@@ -23,7 +23,7 @@ dictdata.js: dict2.txt
 #
 # JS生成
 #
-js:
+compile:
 	coffee -c dictsearch.coffee
 	coffee -c kanaroma.coffee
 
@@ -32,7 +32,5 @@ js:
 #
 test:
 	coffee test.coffee
-test2: js
+test2: compile
 	open test.html
-
-	
