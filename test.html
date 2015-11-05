@@ -1,18 +1,36 @@
 <html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>title</title>
-<script type="text/javascript">
-  exports = {};
-</script>
-<script src="kanaroma.js"></script>
-<script src="dictdata.js"></script>
-<script src="dictsearch.js"></script>
-</head>
-<body>
-  <script type="text/javascript">
-    exports.init(exports.dict);
-    alert(exports.search(exports.kana2roma('かい')))
-  </script>
-</body>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Gictionary 対話的テスト</title>
+    <script type="text/javascript">
+      exports = {};
+    </script>
+    <script src="kanaroma.js"></script>
+    <script src="dictdata.js"></script>
+    <script src="dictsearch.js"></script>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script type="text/javascript">
+      $(function(){
+        exports.init(exports.dict);
+        $('#input').on('keyup',function(event){
+          var s = $('#input').val();
+          k = exports.search(s);
+          $('#textarea').val(k.join(' / '));
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <h2>Gictionary変換ライブラリテスト</h2>
+    <ul>
+      <li>入力した擬似ローマ字が変換されます</li>
+      <ul>
+	<li>「けっかん」=「keTukaN」,  「しゃかい」=「siYakai」, etc.</li>
+      </ul>
+      <li>正規表現が使えます (e.g. 「t[aiueo]u[kg][aiueo]i」)</li>
+    </ul>
+    入力: <input id="input" type="text" width=100>
+    <p/>
+    <textarea id="textarea" rows="10" cols="80"></textarea>
+  </body>
 </html>
