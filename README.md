@@ -13,6 +13,7 @@ Gictionaryはテキスト入力システムに利用するためののオープ�
   <li>GyaimはMacRubyで実装したMac用のIMEです (MountainLion以前用)</li>
   <li>GyaimMotionはRubyMotionで実装したMac用のIMEです (Yosemite以降用)</li>
   <li>SlimeはAndroid用のIMEです</li>
+  <li>ChaimはChromeOS用のIMEです</li>
 </ul>
 
 <h2>辞書の構造</h2>
