@@ -3,16 +3,17 @@
 Gictionaryはテキスト入力システムに利用するためののオープンな辞書データベースです。
 <a href="http://Scrapbox.io/Gictionary">Scrapbox.io/Gictionary</a>にあるデータを
 このレポジトリのソフトウェアで
-<a href="http://GitHub.com/masui/Gyaim">Gyaim</a>、
-<a href="http://GitHub.com/masui/GyaimMotion">GyaimMotion</a>、
-<a href="http://GitHub.com/masui/Slime">Slime</a>、
+<a href="http://GitHub.com/masui/Gyaim">Gyaim</a>,
+<a href="http://GitHub.com/masui/GyaimMotion">GyaimMotion</a>,
+<a href="http://GitHub.com/masui/Slime">Slime</a>,
 <a href="http://GitHub.com/masui/Chaim">Chaim</a>
 などの辞書に変換します。
 
 <ul>
-<li>GyaimはMacRubyで実装したMac用のIMEです (MountainLion以前用)</li>
-<li>GyaimMotionはRubyMotionで実装したMac用のIMEです (Yosemite以降用)</li>
-<li>SlimeはAndroid用のIMEです</li>
+  <li>GyaimはMacRubyで実装したMac用のIMEです (MountainLion以前用)</li>
+  <li>GyaimMotionはRubyMotionで実装したMac用のIMEです (Yosemite以降用)</li>
+  <li>SlimeはAndroid用のIMEです</li>
+</ul>
 
 <h2>辞書の構造</h2>
 
@@ -25,12 +26,13 @@ Gictionaryはテキスト入力システムに利用するためののオープ�
 </pre>
 
 <ul>
-<li>読み、単語のカテゴリ、単語に続く可能性があるカテゴリを空白で区切って並べます</li>
-<li>続くカテゴリが無い場合は読みと単語カテゴリだけを記述します</li>
-<li>「目黒」は駅名または人名の可能性があるので2個のエントリが記述されています</li>
-<li>このフォーマットに適合していない場合は辞書エントリとして扱いません</li>
+  <li>読み、単語のカテゴリ、単語に続く可能性があるカテゴリを空白で区切って並べます</li>
+  <li>続くカテゴリが無い場合は読みと単語カテゴリだけを記述します</li>
+  <li>「目黒」は駅名または人名の可能性があるので2個のエントリが記述されています</li>
+  <li>このフォーマットに適合していない場合は辞書エントリとして扱いません</li>
 </ul>
 
+<p>
 また「<a href="http://Scrapbox.io/Gictionary/駅">駅</a>」というエントリは以下のようになっています。
 
 <pre>
