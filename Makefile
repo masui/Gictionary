@@ -1,10 +1,22 @@
 #
-# http://Gyazz.com/Gictionary2 の接続辞書を使う日本語変換
+# http://Scrapbox.io/Gictionary の接続辞書を使う日本語変換
 #
 
 #
 # 辞書データ生成
 #
+chaimdict:
+	-/bin/rm -r -f tmp
+	mkdir tmp
+	ruby programs/readjson.rb > tmp/tmp.txt
+	grep -v '.*-' tmp/tmp.txt > tmp/tmp1.txt
+	ruby -Iprograms programs/dicmerge \
+		data/wikipedia.txt 500 \
+		data/ktai.txt 300 \
+		tmp/tmp1.txt 1000 \
+		> tmp/tmtxt
+	ruby -Iprograms programs/connection2txt -r rklist.gyaim -n tmp/tmp1.txt > chaimdict.txt
+
 dict1.txt:
 	-mkdir tmp
 	ruby programs/getdict > tmp/tmp.txt
