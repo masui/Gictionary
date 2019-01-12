@@ -17,7 +17,7 @@ Gictionaryはテキスト入力システムに利用するためののオープ�
 
 <h2>辞書の構造</h2>
 
-例えば「<a href="http://Gyazz.com/Gictionary/目黒">目黒</a>」というエントリには以下のようなテキストが入っています。
+例えば「<a href="http://Scrapbox.io/Gictionary/目黒">目黒</a>」というエントリには以下のようなテキストが入っています。
 
 <pre>
   めぐろ 山手線駅名 駅名地名接続
