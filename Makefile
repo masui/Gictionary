@@ -3,12 +3,12 @@
 #
 
 #
-# 辞書データ生成
+# GictionaryからChaimの辞書データ生成
 #
 chaimdict:
 	-/bin/rm -r -f tmp
 	mkdir tmp
-	ruby programs/readjson.rb > tmp/tmp.txt
+	ruby programs/readjson.rb Gictionary.json > tmp/tmp.txt
 	grep -v '.*-' tmp/tmp.txt > tmp/tmp1.txt
 	ruby -Iprograms programs/dicmerge \
 		data/wikipedia.txt 500 \
