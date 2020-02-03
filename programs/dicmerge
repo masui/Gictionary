@@ -11,7 +11,6 @@
 
 require 'rubygems'
 require 'net/http'
-require 'gyazz'
 
 class MergeDic
   def initialize
@@ -104,18 +103,12 @@ class MergeDic
 
   def run
     while arg = ARGV.shift do
-      if arg =~ /^(.*)::(.*)$/ then
-        wiki = $1
-        page = $2
-        process_gyazzdict(wiki,page)
-      else
-        dict = arg
-        arg = ARGV.shift
-        arg =~ /(\*)?([\d]+)/
-        zipf = $1.nil?
-        value = $2.to_f
-        process_dicfile(dict,value,zipf)
-      end
+      dict = arg
+      arg = ARGV.shift
+      arg =~ /(\*)?([\d]+)/
+      zipf = $1.nil?
+      value = $2.to_f
+      process_dicfile(dict,value,zipf)
     end
     dump
   end
